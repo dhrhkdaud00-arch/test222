@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="학교 수강신청 홈페이지 데모" />
+  <title>캠퍼스 수강신청</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="logo" aria-hidden="true">C</div>
+      <div>
+        <h1>캠퍼스 수강신청</h1>
+        <p>2026학년도 2학기</p>
+      </div>
+    </div>
+    <div class="student-card">
+      <span class="status-dot"></span>
+      <div>
+        <strong>홍길동</strong>
+        <small>컴퓨터공학과 · 20261234</small>
+      </div>
+      <button id="logoutBtn" class="ghost-btn" type="button">로그아웃</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <nav aria-label="주요 메뉴">
+        <button class="nav-item active" data-view="courses">과목 조회</button>
+        <button class="nav-item" data-view="registered">신청 내역 <span id="registeredCount" class="badge">0</span></button>
+        <button class="nav-item" data-view="timetable">시간표</button>
+        <button class="nav-item" data-view="guide">수강 안내</button>
+      </nav>
+
+      <section class="credit-box">
+        <div class="credit-header">
+          <span>신청 학점</span>
+          <strong><span id="currentCredits">0</span> / 21</strong>
+        </div>
+        <div class="progress"><div id="creditProgress"></div></div>
+        <p>최대 21학점까지 신청할 수 있습니다.</p>
+      </section>
+    </aside>
+
+    <section class="content">
+      <section id="coursesView" class="view active-view">
+        <div class="page-title">
+          <div>
+            <h2>과목 조회</h2>
+            <p>희망 과목을 검색하고 신청할 수 있습니다.</p>
+          </div>
+          <div class="server-time">현재 시각 <strong id="clock">--:--:--</strong></div>
+        </div>
+
+        <section class="notice">
+          <strong>수강신청 기간</strong>
+          <span>2026.08.10 10:00 ~ 2026.08.14 18:00</span>
+        </section>
+
+        <section class="filter-panel">
+          <div class="field">
+            <label for="departmentFilter">개설 학과</label>
+            <select id="departmentFilter">
+              <option value="all">전체 학과</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="gradeFilter">학년</label>
+            <select id="gradeFilter">
+              <option value="all">전체 학년</option>
+              <option value="1">1학년</option>
+              <option value="2">2학년</option>
+              <option value="3">3학년</option>
+              <option value="4">4학년</option>
+            </select>
+          </div>
+          <div class="field search-field">
+            <label for="searchInput">과목명·교수명 검색</label>
+            <input id="searchInput" type="search" placeholder="예: 데이터베이스, 김교수" />
+          </div>
+          <button id="resetBtn" class="secondary-btn" type="button">초기화</button>
+        </section>
+
+        <div class="result-summary">
+          <span>검색 결과 <strong id="resultCount">0</strong>개</span>
+          <span class="legend"><i></i> 신청 가능</span>
+        </div>
+
+        <section class="table-wrap" aria-label="과목 목록">
+          <table>
+            <thead>
+              <tr>
+                <th>학수번호</th>
+                <th>과목명</th>
+                <th>학과</th>
+                <th>학년</th>
+                <th>학점</th>
+                <th>담당교수</th>
+                <th>강의시간</th>
+                <th>정원</th>
+                <th>신청</th>
+              </tr>
+            </thead>
+            <tbody id="courseTableBody"></tbody>
+          </table>
+        </section>
+      </section>
+
+      <section id="registeredView" class="view">
+        <div class="page-title">
+          <div><h2>신청 내역</h2><p>현재 신청한 과목을 확인하고 취소할 수 있습니다.</p></div>
+        </div>
+        <div id="registeredEmpty" class="empty-state">신청한 과목이 없습니다.</div>
+        <section id="registeredTableWrap" class="table-wrap hidden">
+          <table>
+            <thead><tr><th>학수번호</th><th>과목명</th><th>학점</th><th>담당교수</th><th>강의시간</th><th>취소</th></tr></thead>
+            <tbody id="registeredTableBody"></tbody>
+          </table>
+        </section>
+      </section>
+
+      <section id="timetableView" class="view">
+        <div class="page-title"><div><h2>시간표</h2><p>신청한 과목의 주간 시간표입니다.</p></div></div>
+        <div id="timetable" class="timetable"></div>
+      </section>
+
+      <section id="guideView" class="view">
+        <div class="page-title"><div><h2>수강 안내</h2><p>신청 전 반드시 확인해 주세요.</p></div></div>
+        <div class="guide-grid">
+          <article><span>01</span><h3>신청 학점</h3><p>학기당 최대 신청 가능 학점은 21학점입니다.</p></article>
+          <article><span>02</span><h3>시간 중복</h3><p>동일 시간대에 개설된 과목은 동시에 신청할 수 없습니다.</p></article>
+          <article><span>03</span><h3>정원 제한</h3><p>정원이 마감된 과목은 신청 버튼이 비활성화됩니다.</p></article>
+          <article><span>04</span><h3>신청 저장</h3><p>신청 내역은 현재 브라우저에 자동 저장됩니다.</p></article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
